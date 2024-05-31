@@ -1,0 +1,27 @@
+---
+import "@fontsource-variable/plus-jakarta-sans";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<'main'>
+
+const { class: className, ...props } = Astro.props;
+---
+
+<div class="min-h-screen flex flex-col w-full">
+  <Header />
+
+  <main
+    id="main-content"
+    class:list={['pt-16 w-full max-w-screen-lg mx-auto px-6', className]}
+    transition:animate="fade"
+    {...props}
+  >
+    <slot />
+  </main>
+</div>
+
+<div class="py-16 text-sm border-t border-neutral-700/25">
+  <Footer class="max-w-screen-lg mx-auto px-6" />
+</div>

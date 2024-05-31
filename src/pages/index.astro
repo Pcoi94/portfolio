@@ -1,0 +1,111 @@
+---
+import ProjectCard from "../components/ProjectCard.astro";
+import RootLayout from "../layouts/RootLayout.astro";
+import Layout from "../layouts/Layout.astro";
+
+export const prerender = true;
+---
+
+<RootLayout
+  title="Pcoi94"
+  description="Roblox front-end & back-end developer."
+  social={{
+    title: "Hi, i'm Pcoi94",
+    type: "website",
+    url: "https://pcoiscript.xyz",
+  }}
+>
+  <Layout>
+    <section class="pb-36 pt-40">
+      <div id="hero">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-gray-300">
+          Hi, i'm <span class="text-white font-extrabold">Pcoi94</span>.
+        </h1>
+
+        <p class="text-neutral-400 text-lg max-w-xs sm:text-xl sm:max-w-md">
+          Roblox front-end & back-end developer. Contributed to <span class="text-white font-semibold">10m+</span> visits.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-32" id="contributions">
+      <h2 class="text-2xl font-bold mb-4 text-gray-300">
+        my <span class="text-white font-extrabold">contributions</span>.
+      </h2>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 group project-cards">
+        <li>
+          <ProjectCard
+            name="🚌 School Trip"
+            href="https://www.roblox.com/games/start?placeId=12670802458"
+          >
+            A Roblox <b>story game</b>.
+          </ProjectCard>
+        </li>
+
+        <li>
+          <ProjectCard
+            name="❄️ A Snowy Trip"
+            href="https://www.roblox.com/games/start?placeId=17184518794"
+          >
+            A <b>Roblox project</b> made in 14 days.
+          </ProjectCard>
+        </li>
+
+        <li>
+          <ProjectCard
+            name="🎲 Game RNG"
+            href="https://www.roblox.com/games/start?placeId=17051457409"
+          >
+            A <b>roblox rng</b> game that saldy didn't worked.
+          </ProjectCard>
+        </li>
+
+        <li>
+          <ProjectCard
+            name="🛍️ Marché Build"
+            href="https://www.roblox.com/groups/8194141/Ro-Market#!/about"
+          >
+            A french <b>roblox market</b>.
+          </ProjectCard>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mb-32" id="projects">
+      <h2 class="text-2xl font-bold mb-4 text-gray-300">
+        my <span class="text-white font-extrabold">projects</span>.
+      </h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 group project-cards">
+        <li>
+          <ProjectCard
+            name="🧮 Calculator"
+            href="/calculator"
+          >
+            A <b>Robux calculator</b>.
+          </ProjectCard>
+        </li>
+
+        <li>
+          <ProjectCard
+            name="🐾 Selection2Path"
+            href="https://devforum.roblox.com/t/-/2863936/"
+          >
+            Convert <b>Selection</b> to a path.
+          </ProjectCard>
+        </li>
+
+        <li>
+          <ProjectCard
+            name="💾 Commands!"
+            href=""
+          >
+            A plugin that create commands using your <b>CommandBar</b>.
+          </ProjectCard>
+        </li>
+
+        </li>
+      </ul>
+    </section>
+  </Layout>
+</RootLayout>

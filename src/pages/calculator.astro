@@ -1,0 +1,143 @@
+---
+import RootLayout from "../layouts/RootLayout.astro";
+import Layout from "../layouts/Layout.astro";
+import Dropdown from "../components/Dropdown.astro";
+import Input from "../components/Input.astro";
+
+export const prerender = true;
+const robuxType = ["Normal Robux", "Devexed Robux"];
+const convertionType = [
+  "US Dollar (USD)",
+  "Euro (EUR)",
+  "Canadian Dollar (CAD)",
+  "Australian Dollar (AUD)",
+  "New Zealand Dollar (NZD)",
+  "British Pound (GBP)",
+  "Mexican Peso (MXN)",
+  "Chilean Peso (CLP)",
+  "Hong Kong Dollar (HKD)",
+];
+---
+
+<RootLayout
+  title="Pcoi94"
+  description="Roblox front-end & back-end developer."
+  social={{
+    title: "Devex calculator",
+    type: "website",
+    url: "https://pcoiscript.xyz/calculator",
+  }}
+>
+  <Layout>
+    <section class="mb-64"></section>
+    <Input value="0" id="input" />
+    <Input value="0" id="output" />
+
+    <section class="mb-6"></section>
+
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 group project-cards">
+      <li>
+        <Dropdown options={robuxType} id="robuxConv" />
+      </li>
+      <li>
+        <Dropdown options={convertionType} id="currencyConv" />
+      </li>
+    </ul>
+  </Layout>
+</RootLayout>
+
+<script>
+import { TRANSITION_AFTER_PREPARATION } from "astro:transitions/client";
+import Input from "../components/Input.astro";
+
+  document.addEventListener("astro:page-load", () => {
+    const url = new URL(window.location.href);
+
+    const input: any = document.getElementById("input");
+    const output: any = document.getElementById("output");
+
+    const robuxConv: any = document.getElementById("robuxConv");
+    const currencyConv: any = document.getElementById("currencyConv");
+    var state: boolean = true;
+
+    const convertion: any = {
+      "US Dollar (USD)": [9.99 / 9.99, 1],
+      "Euro (EUR)": [11.99 / 9.99, 0.92162209],
+      "Canadian Dollar (CAD)": [12.99 / 9.99, 1.3631096],
+      "Australian Dollar (AUD)": [13.99 / 9.99, 1.501476],
+      "New Zealand Dollar (NZD)": [15.99 / 9.99, 1.6255105],
+      "British Pound (GBP)": [8.99 / 9.99, 0.78513106],
+      "Mexican Peso (MXN)": [249.0 / 9.99, 17.014842],
+      "Chilean Peso (CLP)": [8900.0 / 9.99, 917.97679],
+      "Hong Kong Dollar (HKD)": [78.0 / 9.99, 117.33174],
+    };
+
+    function calculate() {
+      const conv: any = convertion[currencyConv.textContent];
+      const conv2 = state ? conv[1] : conv[0]
+
+      var calcul = robuxConv.textContent == "Normal Robux" ? (9.99 / 800) : (105 / 30000);
+      const value = state ? input.value : output.value;
+
+      calcul = state ? (value * calcul): (value / calcul);
+      calcul = state ? calcul * conv2 : calcul / conv2
+
+      const valueToShow = state ? output : input;
+      valueToShow.value = calcul.toFixed(3);
+
+      setQuery("robux", input.value);
+      setQuery("from", robuxConv.textContent);
+      setQuery("to", currencyConv.textContent);
+    }
+
+    function getQuery(query: string) {
+      const queryParams = new URLSearchParams(window.location.search);
+      return queryParams.get(query);
+    }
+
+    function setQuery(query: string, value: any) {
+      const url = new URL(window.location.href);
+      url.searchParams.set(query, value);
+
+      window.history.pushState({}, "", url.toString());
+    }
+
+    setTimeout(() => {
+      input.addEventListener("input", function() {
+        state = true;
+        calculate();
+      });
+
+      output.addEventListener("input", function() {
+        state = false;
+        calculate();
+      });
+      
+      currencyConv.addEventListener("DOMSubtreeModified", calculate)
+      robuxConv.addEventListener("DOMSubtreeModified", calculate)
+
+      const robux = getQuery("robux");
+      if (getQuery("robux") == null) {
+        setQuery("robux", 0);
+      } else {
+        input.value = String(robux);
+      }
+
+      const from = getQuery("from");
+      if (from == null || (from != "Normal Robux" && from != "Devexed Robux")) {
+        setQuery("from", "Normal Robux");
+      } else {
+        robuxConv.textContent = from;
+      }
+
+      const to = getQuery("to");
+      if (to == null || convertion[to] == null) {
+        setQuery("to", "US Dollar (USD)");
+      } else {
+        currencyConv.textContent = to;
+      }
+
+      calculate()
+    });
+  });
+</script>

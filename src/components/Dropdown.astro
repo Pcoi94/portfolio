@@ -1,0 +1,222 @@
+---
+interface Props {
+  options: string[];
+  id: string;
+}
+
+const { options, id } = Astro.props;
+---
+
+<!-- https://codepen.io/randhawa/pen/PjvEmg -->
+<astro-dropdown class="select-menu" data-options={options}>
+  <div class="select-btn">
+    <span class="sBtn-text" id={id}>Select</span>
+    <svg
+      width="14"
+      height="15"
+      viewBox="0 0 14 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      ><path
+        d="M3.5 5.75L7 9.25L10.5 5.75"
+        stroke="#131316"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path></svg
+    >
+  </div>
+
+  <ul class="options"></ul>
+</astro-dropdown>
+
+<style>
+  .select-menu {
+    max-width: 330px;
+    margin: 50px auto;
+  }
+  .select-menu .select-btn {
+    display: flex;
+    height: 55px;
+    background: #fff;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 400;
+    border-radius: 8px;
+    align-items: center;
+    cursor: pointer;
+    justify-content: space-between;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  .select-menu .options {
+    position: absolute;
+    width: 330px;
+    overflow-y: auto;
+    max-height: 295px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    animation-name: fadeInDown;
+    -webkit-animation-name: fadeInDown;
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+    -webkit-animation-duration: 0.2s;
+    -webkit-animation-fill-mode: both;
+  }
+  .select-menu .options .option .option-text {
+    font-size: 18px;
+    color: #333;
+  }
+  .sBtn-text {
+    font-weight: bold;
+    color: #333;
+  }
+  .select-menu .options .option {
+    display: flex;
+    height: 55px;
+    cursor: pointer;
+    padding: 0 16px;
+    border-radius: 8px;
+    align-items: center;
+    background: #fff;
+  }
+  .select-menu .options .option:hover {
+    background: #f2f2f2;
+  }
+  .select-menu.active .options {
+    display: block;
+    opacity: 0;
+    z-index: 10;
+    animation-name: fadeInUp;
+    -webkit-animation-name: fadeInUp;
+    animation-duration: 0.4s;
+    animation-fill-mode: both;
+    -webkit-animation-duration: 0.4s;
+    -webkit-animation-fill-mode: both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      transform: translate3d(0, 30px, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  }
+  @keyframes fadeInDown {
+    from {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+    to {
+      transform: translate3d(0, 20px, 0);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  function toggleOptions(options: any, state: boolean) {
+    options.forEach((option: any) => {
+      option.disabled = !state;
+
+      option.style.cursor = state ? "pointer" : "default";
+      setTimeout(
+        () => (option.style.display = state ? "flex" : "none"),
+        state ? 0 : 200,
+      );
+    });
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    class AstroDropdown extends HTMLElement {
+      constructor() {
+        super();
+
+        const menus: NodeListOf<Element> =
+          document.querySelectorAll(".select-menu");
+
+        menus.forEach((menu) => {
+          const selectBtn: any = menu.querySelector(".select-btn");
+          const sBtnText: any = menu.querySelector(".sBtn-text");
+          const optionsTbl = (menu as HTMLElement).dataset.options?.split(",") || [];
+          
+          var options: [HTMLLIElement?] = [];
+
+          optionsTbl.forEach((option) => {
+            const listItem = document.createElement("li");
+            listItem.classList.add("option");
+
+            const span = document.createElement("span");
+            span.classList.add("option-text");
+            span.textContent = option;
+
+            listItem.style.display = "flex";
+            listItem.style.height = "55px";
+            listItem.style.cursor = "pointer";
+            listItem.style.padding = "0 16px";
+            listItem.style.borderRadius = "8px";
+            listItem.style.alignItems = "center";
+            listItem.style.background = "#fff";
+
+            span.style.fontSize = "18px";
+            span.style.color = "#333";
+
+            listItem.appendChild(span);
+
+            const optionsList = menu.querySelector(".options");
+            if (optionsList) {
+              optionsList.appendChild(listItem);
+            }
+
+            options.push(listItem);
+
+            listItem.addEventListener("mouseenter", () => {
+              listItem.style.background = "#f2f2f2";
+            });
+
+            listItem.addEventListener("mouseleave", () => {
+              listItem.style.background = "#fff";
+            });
+          });
+
+          var toggled: boolean = false;
+
+          selectBtn.onclick = () => {
+            menu.classList.toggle("active");
+            toggled = !toggled;
+            toggleOptions(options, toggled);
+          };
+
+          menu.classList.remove("active");
+          toggleOptions(options, false);
+          const optionTextElement = options[0]?.querySelector(
+            ".option-text",
+          ) as HTMLElement | null;
+          if (optionTextElement) {
+            sBtnText.innerText = optionTextElement.innerText;
+          }
+
+          options.forEach((option: any) => {
+            option.onclick = () => {
+              if (!menu.classList.contains("active")) {
+                return;
+              }
+
+              sBtnText.innerText =
+                option.querySelector(".option-text").innerText;
+
+              menu.classList.remove("active");
+              toggled = false;
+
+              toggleOptions(options, false);
+            };
+          });
+        });
+      }
+    }
+
+    customElements.define("astro-dropdown", AstroDropdown);
+  });
+</script>
